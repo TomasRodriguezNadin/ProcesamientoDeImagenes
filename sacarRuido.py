@@ -26,7 +26,7 @@ def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
                 imagenMascara[i, j, 1] = 0
                 imagenMascara[i, j, 2] = 1
     imagenMascara = hsv2rgb(imagenMascara)
-    axs[2][columna].set_title("mascara no negros")
+    axs[2][columna].set_title("Mascara no negros")
     axs[2][columna].axis("off")
     axs[2][columna].imshow((rgb2gray(imagenMascara)), cmap='gray', clim=(0, 1))
 
@@ -76,15 +76,15 @@ def sacarValoresBajos(imagen):
 
 if __name__ == "__main__":
     imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
-    imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0003.png"))
+    imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0065.png"))
     imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
     imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0017.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-    pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Promedio aritmetico", axs, 0)
-    pltImagenConH(imagenRuidosa, sacarValoresBajos(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
-    pltImagenConH(imagenNiebla, sacarGrises(imagenNiebla), "Imagen Niebla", "sacar grises", axs, 2)
-    pltImagenConH(imagenSaltAndPepper, sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", "sacarGrises", axs, 3)
+    pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Sacar grises", axs, 0)
+    pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConH(imagenNiebla, sacarGrises(imagenNiebla), "Imagen Niebla", "Sacar grises", axs, 2)
+    pltImagenConH(imagenSaltAndPepper, sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
 
     plt.tight_layout()
     plt.show()
