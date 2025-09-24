@@ -69,7 +69,7 @@ if __name__ == "__main__":
     imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
     imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0065.png"))
     imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
-    imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0017.png"))
+    imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0054.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
     pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Sacar grises", axs, 0)
