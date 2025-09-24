@@ -27,16 +27,17 @@ def imagenConHistograma(imagen, nombre, axs, columna):
     print(f"{nombre} cant de pixeles en el menor 1/5 {cantBajos}")
 
 
-imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
-imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0003.png"))
-imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
-imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
+if __name__ == "__main__":
+    imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
+    imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0003.png"))
+    imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
+    imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
-fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-imagenConHistograma(sr.sacarGrises(imagenNormal), "Imagen Normal", axs, 0)
-imagenConHistograma(sr.sacarGrises(imagenRuidosa), "Imagen Ruidosa", axs, 1)
-imagenConHistograma(sr.sacarGrises(imagenNiebla), "Imagen Niebla", axs, 2)
-imagenConHistograma(sr.sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", axs, 3)
+    fig, axs = plt.subplots(3, 4, figsize=(20, 10))
+    imagenConHistograma(sr.sacarGrises(imagenNormal), "Imagen Normal", axs, 0)
+    imagenConHistograma(sr.sacarGrises(imagenRuidosa), "Imagen Ruidosa", axs, 1)
+    imagenConHistograma(sr.sacarGrises(imagenNiebla), "Imagen Niebla", axs, 2)
+    imagenConHistograma(sr.sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", axs, 3)
 
-plt.tight_layout()
-plt.show()
+    plt.tight_layout()
+    plt.show()
