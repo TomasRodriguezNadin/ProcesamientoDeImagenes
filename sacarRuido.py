@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from skimage import io, util
 from skimage.color import rgb2hsv, hsv2rgb
 from skimage.filters import gaussian
-from scipy.stats import gmean
 
 
 def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
@@ -88,10 +87,10 @@ imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
 imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
 fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-pltImagenConH(imagenNormal, imagenNormal, "Imagen Normal", "Identidad", axs, 0)
+pltImagenConH(imagenNormal, promedioSaltAndPepper(imagenNormal), "Imagen Normal", "Promedio aritmetico", axs, 0)
 pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
 pltImagenConH(imagenNiebla, promedioGeometrico(imagenNiebla), "Imagen Niebla", "Promedio Geometrico", axs, 2)
-pltImagenConH(imagenSaltAndPepper, promedioSaltAndPepper(imagenSaltAndPepper), "Imagen SaltAndPepper", "Promediar blancos por vecinos", axs, 3)
+pltImagenConH(imagenSaltAndPepper, promedioSaltAndPepper(imagenSaltAndPepper), "Imagen SaltAndPepper", "Suprimir blancos y promediar por vecinos", axs, 3)
 
 plt.tight_layout()
 plt.show()
