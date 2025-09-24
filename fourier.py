@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
-from skimage.color import rgb2hsv, hsv2rgb
 from skimage.filters import gaussian
 import sacarRuido as sr
 
@@ -14,9 +13,13 @@ def log_filter(image):
 
 
 def limpiarImagen(imagen):
-    # transformada = np.fft.fft2(imagen)
-    # transformada_limpia = gaussian(transformada)
-    return imagen
+    transformada = np.fft.fft2(imagen)
+    real = np.real(transformada)
+    imaginario = np.imag(transformada)
+    realLimpia = gaussian(real)
+    imaginariaLimpia = gaussian(imaginario)
+    transformada_limpia = realLimpia + imaginariaLimpia * 1j
+    return np.real(np.fft.ifft2(transformada_limpia))
 
 
 def mostrarFourier(imagen, nombre, axs, columna):
@@ -45,7 +48,7 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
     mostrarFourier(sr.sacarGrises(imagenNormal), "Imagen Normal", axs, 0)
     mostrarFourier(sr.sacarGrises(imagenRuidosa), "Imagen Ruidosa", axs, 1)
-    mostrarFourier(imagenRuidosa, "Imagen Niebla", axs, 2)
+    mostrarFourier(limpiarImagen(imagenRuidosa), "Imagen Niebla", axs, 2)
     mostrarFourier(sr.sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", axs, 3)
 
     plt.tight_layout()

@@ -5,7 +5,6 @@ from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
 
 
 def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
-
     axs[0][columna].set_title(f"Imagen {nombre}")
     axs[0][columna].axis("off")
     axs[0][columna].imshow(imagen, clim=(0, 1))
@@ -63,14 +62,6 @@ def sacarGrises(imagen):
     imagenHSV = rgb2hsv(imagen)
     canalSaturacion = imagenHSV[:, :, 1]
     imagenHSV[canalSaturacion == 0] = 0
-    return hsv2rgb(imagenHSV)
-
-
-def sacarValoresBajos(imagen):
-    imagenHSV = rgb2hsv(imagen)
-    canalValor = imagenHSV[:, :, 2]
-    imagenHSV[canalValor < 0.3] = 0
-    promedioAritmetico(imagenHSV)
     return hsv2rgb(imagenHSV)
 
 
