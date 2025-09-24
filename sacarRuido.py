@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
 from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
-from skimage.feature import canny
 
 
 def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
@@ -29,7 +28,7 @@ def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
     imagenMascara = hsv2rgb(imagenMascara)
     axs[2][columna].set_title("mascara no negros")
     axs[2][columna].axis("off")
-    axs[2][columna].imshow(canny(rgb2gray(imagenH)), cmap='gray', clim=(0, 1))
+    axs[2][columna].imshow((rgb2gray(imagenMascara)), cmap='gray', clim=(0, 1))
 
 
 def promedioSaltAndPepper(imagen):
@@ -42,23 +41,21 @@ def promedioSaltAndPepper(imagen):
 # Capitulo 5, seccion de restauracion en presencia de ruido aditivo
 def promedioGeometrico(imagen):
     res = np.zeros(imagen.shape)
-    imagenProducto = np.power(imagen, 1.0/9)
-    for i in range(1, res.shape[0] - 1):
-        for j in range(1, res.shape[1] - 1):
-            vecinos = imagenProducto[i-1:i+2, j-1:j+2]
+    for i in range(2, res.shape[0] - 2):
+        for j in range(2, res.shape[1] - 2):
+            vecinos = imagen[i-2:i+3, j-2:j+3]
             for canal in range(3):
-                res[i, j, canal] = np.prod(vecinos[:, :, canal])
+                res[i, j, canal] = np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
     return res
 
 
 def promedioAritmetico(imagen):
     res = np.zeros(imagen.shape)
-    imagenSuma = imagen / 9
     for i in range(1, res.shape[0] - 1):
         for j in range(1, res.shape[1] - 1):
-            vecinos = imagenSuma[i-1:i+2, j-1:j+2]
+            vecinos = imagen[i-1:i+2, j-1:j+2]
             for canal in range(3):
-                res[i, j, canal] = np.sum(vecinos[:, :, canal])
+                res[i, j, canal] = np.sum(vecinos[:, :, canal]) / 9
     return res
 
 
@@ -66,6 +63,14 @@ def sacarGrises(imagen):
     imagenHSV = rgb2hsv(imagen)
     canalSaturacion = imagenHSV[:, :, 1]
     imagenHSV[canalSaturacion == 0] = 0
+    return hsv2rgb(imagenHSV)
+
+
+def sacarValoresBajos(imagen):
+    imagenHSV = rgb2hsv(imagen)
+    canalValor = imagenHSV[:, :, 2]
+    imagenHSV[canalValor < 0.3] = 0
+    promedioAritmetico(imagenHSV)
     return hsv2rgb(imagenHSV)
 
 
@@ -77,7 +82,7 @@ if __name__ == "__main__":
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
     pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Promedio aritmetico", axs, 0)
-    pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConH(imagenRuidosa, sacarValoresBajos(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
     pltImagenConH(imagenNiebla, sacarGrises(imagenNiebla), "Imagen Niebla", "sacar grises", axs, 2)
     pltImagenConH(imagenSaltAndPepper, sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", "sacarGrises", axs, 3)
 
