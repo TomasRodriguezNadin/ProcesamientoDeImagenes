@@ -29,7 +29,7 @@ def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
     imagenMascara = hsv2rgb(imagenMascara)
     axs[2][columna].set_title("mascara no negros")
     axs[2][columna].axis("off")
-    axs[2][columna].imshow(canny(rgb2gray(imagen)), clim=(0, 1))
+    axs[2][columna].imshow(canny(rgb2gray(imagenH)), cmap='gray', clim=(0, 1))
 
 
 def promedioSaltAndPepper(imagen):
@@ -42,13 +42,13 @@ def promedioSaltAndPepper(imagen):
 # Capitulo 5, seccion de restauracion en presencia de ruido aditivo
 def promedioGeometrico(imagen):
     res = np.zeros(imagen.shape)
-    imagenProducto = np.power(imagen, 1.0/16)
-    for i in range(2, res.shape[0] - 2):
-        for j in range(2, res.shape[1] - 2):
-            vecinos = imagenProducto[i-2:i+3, j-2:j+3]
+    imagenProducto = np.power(imagen, 1.0/9)
+    for i in range(1, res.shape[0] - 1):
+        for j in range(1, res.shape[1] - 1):
+            vecinos = imagenProducto[i-1:i+2, j-1:j+2]
             for canal in range(3):
                 res[i, j, canal] = np.prod(vecinos[:, :, canal])
-    return np.clip(res, 0, 1)
+    return res
 
 
 def promedioAritmetico(imagen):
@@ -72,10 +72,10 @@ def sacarGrises(imagen):
 imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
 imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0003.png"))
 imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
-imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
+imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0017.png"))
 
 fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-pltImagenConH(imagenNormal, promedioSaltAndPepper(imagenNormal), "Imagen Normal", "Promedio aritmetico", axs, 0)
+pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Promedio aritmetico", axs, 0)
 pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
 pltImagenConH(imagenNiebla, sacarGrises(imagenNiebla), "Imagen Niebla", "sacar grises", axs, 2)
 pltImagenConH(imagenSaltAndPepper, sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", "sacarGrises", axs, 3)

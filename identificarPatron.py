@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
 from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
+import sacarRuido as sr
 
 
 def imagenConHistograma(imagen, nombre, axs, columna):
@@ -32,10 +33,10 @@ imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
 imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
 fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-imagenConHistograma(imagenNormal, "Imagen Normal", axs, 0)
-imagenConHistograma(imagenRuidosa, "Imagen Ruidosa", axs, 1)
-imagenConHistograma(imagenNiebla, "Imagen Niebla", axs, 2)
-imagenConHistograma(imagenSaltAndPepper, "Imagen SaltAndPepper", axs, 3)
+imagenConHistograma(sr.sacarGrises(imagenNormal), "Imagen Normal", axs, 0)
+imagenConHistograma(sr.sacarGrises(imagenRuidosa), "Imagen Ruidosa", axs, 1)
+imagenConHistograma(sr.sacarGrises(imagenNiebla), "Imagen Niebla", axs, 2)
+imagenConHistograma(sr.sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", axs, 3)
 
 plt.tight_layout()
 plt.show()
