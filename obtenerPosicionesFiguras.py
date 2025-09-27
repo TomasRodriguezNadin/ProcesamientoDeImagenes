@@ -10,39 +10,39 @@ minY = 0
 
 
 def esNegro(pixel):
-    return pixel[1] < 0.1 and pixel[2] < 0.1
+    return pixel[1] == 0 and pixel[2] == 0
 
 
-def dfs(imagen, visitados, y, x):
+def dfs(imagen, visitados, starty, startx):
     global maxX, minX, maxY, minY
-    maxX = x
-    minX = x
-    maxY = y
-    minY = y
+    maxX = startx
+    minX = startx
+    maxY = starty
+    minY = starty
 
-    stack = [(x, y)]
+    stack = [(startx, starty)]
 
     while len(stack) != 0:
-        xActual, yActual = stack.pop()
-        if visitados[yActual, xActual] != 0:
+        x, y = stack.pop()
+        if visitados[y, x] != 0:
             continue
 
-        visitados[yActual, xActual] = 1
+        visitados[y, x] = 1
 
-        if xActual > maxX:
-            maxX = xActual
-        elif xActual < minX:
-            minX = xActual
+        if x > maxX:
+            maxX = x
+        elif x < minX:
+            minX = x
 
-        if yActual > maxY:
-            maxY = yActual
-        elif yActual < minY:
-            minY = yActual
+        if y > maxY:
+            maxY = y
+        elif y < minY:
+            minY = y
 
-        for xvecino in range(max(xActual-1, 0), min(xActual+2, imagen.shape[0] - 1)):
-            for yvecino in range(max(yActual-1, 0), min(yActual+2, imagen.shape[1] - 1)):
-                if (not esNegro(imagen[yvecino, xvecino])) and (xvecino != xActual or yvecino != yActual):
-                    stack.append((yvecino, xvecino))
+        for xvecino in range(max(x-2, 0), min(x+3, imagen.shape[1])):
+            for yvecino in range(max(y-2, 0), min(y+3, imagen.shape[0])):
+                if (xvecino != x or yvecino != y) and not esNegro(imagen[yvecino, xvecino]):
+                    stack.append((xvecino, yvecino))
 
 
 def encontrarPosicionesImagenes(imagen):
@@ -54,9 +54,9 @@ def encontrarPosicionesImagenes(imagen):
     res = []
     imagenHSV = rgb2hsv(imagen)
     visitados = np.zeros((imagen.shape[0], imagen.shape[1]))
-    for i in range(1, imagen.shape[0] - 1):
-        for j in range(1, imagen.shape[1] - 1):
-            if (not esNegro(imagenHSV[i, j])) and visitados[i, j] == 0:
+    for i in range(imagen.shape[0]):
+        for j in range(imagen.shape[1]):
+            if visitados[i, j] == 0 and not esNegro(imagenHSV[i, j]):
                 dfs(imagenHSV, visitados, i, j)
                 res.append([minX, maxX, minY, maxY])
 
