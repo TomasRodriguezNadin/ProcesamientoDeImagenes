@@ -30,12 +30,6 @@ def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
     axs[2][columna].imshow((rgb2gray(imagenMascara)), cmap='gray', clim=(0, 1))
 
 
-def promedioSaltAndPepper(imagen):
-    copia = sacarGrises(imagen)
-    copia = promedioAritmetico(copia)
-    return hsv2rgb(copia)
-
-
 # Promedio geometrico de Digital Image Processing (Gonzales, Woods)
 # Capitulo 5, seccion de restauracion en presencia de ruido aditivo
 def promedioGeometrico(imagen):
@@ -48,16 +42,6 @@ def promedioGeometrico(imagen):
     return res
 
 
-def promedioAritmetico(imagen):
-    res = np.zeros(imagen.shape)
-    for i in range(1, res.shape[0] - 1):
-        for j in range(1, res.shape[1] - 1):
-            vecinos = imagen[i-1:i+2, j-1:j+2]
-            for canal in range(3):
-                res[i, j, canal] = np.sum(vecinos[:, :, canal]) / 9
-    return res
-
-
 def sacarGrises(imagen):
     imagenHSV = rgb2hsv(imagen)
     canalSaturacion = imagenHSV[:, :, 1]
@@ -65,17 +49,52 @@ def sacarGrises(imagen):
     return hsv2rgb(imagenHSV)
 
 
+def max(arr):
+    if arr[2] >= arr[1]:
+        if arr[2] >= arr[0]:
+            return 2
+        else:
+            return 0
+    elif arr[1] >= arr[0]:
+        return 1
+    else:
+        return 0
+
+
+def umbralizarColores(imagen):
+    copia = np.copy(imagen)
+    for i in range(imagen.shape[0]):
+        for j in range(imagen.shape[1]):
+            maximo = max(imagen[i, j])
+            for canal in range(3):
+                if canal != maximo:
+                    copia[i, j, canal] = 0
+
+    return copia
+
+
+def sacarNiebla(imagen):
+    imagenHSV = rgb2hsv(imagen)
+    for i in range(imagen.shape[0]):
+        for j in range(imagen.shape[1]):
+            if imagenHSV[i, j, 1] == 0:
+                imagenHSV[i, j] = 0
+            else:
+                imagenHSV[i, j, 1] = 1
+    return hsv2rgb(imagenHSV)
+
+
 if __name__ == "__main__":
-    imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0000.png"))
-    imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0065.png"))
-    imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0008.png"))
-    imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0054.png"))
+    imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0001.png"))
+    imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0009.png"))
+    imagenNiebla = util.img_as_float64(io.imread("./shape_dataset/image_0011.png"))
+    imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-    pltImagenConH(imagenNormal, sacarGrises(imagenNormal), "Imagen Normal", "Sacar grises", axs, 0)
-    pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
-    pltImagenConH(imagenNiebla, sacarGrises(imagenNiebla), "Imagen Niebla", "Sacar grises", axs, 2)
-    pltImagenConH(imagenSaltAndPepper, sacarGrises(imagenSaltAndPepper), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
+    pltImagenConH(imagenNormal, umbralizarColores(sacarNiebla(imagenNormal)), "Imagen Normal", "Sacar grises", axs, 0)
+    pltImagenConH(imagenRuidosa, umbralizarColores(promedioGeometrico(imagenRuidosa)), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConH(imagenNiebla, umbralizarColores(sacarNiebla(imagenNiebla)), "Imagen Niebla", "Sacar grises", axs, 2)
+    pltImagenConH(imagenSaltAndPepper, umbralizarColores(sacarNiebla(imagenSaltAndPepper)), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
 
     plt.tight_layout()
     plt.show()
