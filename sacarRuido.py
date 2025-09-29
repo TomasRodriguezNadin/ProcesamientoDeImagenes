@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
 from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
+from skimage.filters.rank import maximum
 
 
 def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
@@ -38,14 +39,12 @@ def promedioGeometrico(imagen):
         for j in range(2, res.shape[1] - 2):
             vecinos = imagen[i-2:i+3, j-2:j+3]
             for canal in range(3):
-                res[i, j, canal] = np.min(vecinos[:, :, canal])  # np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
+                res[i, j, canal] = np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
 
-    resFiltrada = np.zeros(imagen.shape)
-    for i in range(2, imagen.shape[0] - 2):
-        for j in range(2, imagen.shape[1] - 2):
-            vecinos = res[i-2:i+3, j-2:j+3]
-            for canal in range(3):
-                resFiltrada[i, j, canal] = np.max(vecinos[:, :, canal])
+    vecindario = np.ones((3, 3))
+    resFiltrada = np.empty(imagen.shape)
+    for canal in range(3):
+        resFiltrada[:, :, canal] = maximum(res[:, :, canal], footprint=vecindario)
     return resFiltrada
 
 
@@ -57,15 +56,12 @@ def sacarGrises(imagen):
 
 
 def max(arr):
-    if arr[2] >= arr[1]:
-        if arr[2] >= arr[0]:
-            return 2
-        else:
-            return 0
-    elif arr[1] >= arr[0]:
+    maximo = np.max(arr)
+    if arr[2] == maximo:
+        return 2
+    if arr[1] == maximo:
         return 1
-    else:
-        return 0
+    return 0
 
 
 def umbralizarColores(imagen):
@@ -98,10 +94,10 @@ if __name__ == "__main__":
     imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-    pltImagenConH(imagenNormal, umbralizarColores(sacarNiebla(imagenNormal)), "Imagen Normal", "Sacar grises", axs, 0)
-    pltImagenConH(imagenRuidosa, umbralizarColores(promedioGeometrico(imagenRuidosa)), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
-    pltImagenConH(imagenNiebla, umbralizarColores(sacarNiebla(imagenNiebla)), "Imagen Niebla", "Sacar grises", axs, 2)
-    pltImagenConH(imagenSaltAndPepper, umbralizarColores(sacarNiebla(imagenSaltAndPepper)), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
+    pltImagenConH(imagenNormal, sacarNiebla(imagenNormal), "Imagen Normal", "Sacar grises", axs, 0)
+    pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConH(imagenNiebla, sacarNiebla(imagenNiebla), "Imagen Niebla", "Sacar grises", axs, 2)
+    pltImagenConH(imagenSaltAndPepper, sacarNiebla(imagenSaltAndPepper), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
 
     plt.tight_layout()
     plt.show()
