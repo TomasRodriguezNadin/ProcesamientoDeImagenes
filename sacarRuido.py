@@ -38,8 +38,15 @@ def promedioGeometrico(imagen):
         for j in range(2, res.shape[1] - 2):
             vecinos = imagen[i-2:i+3, j-2:j+3]
             for canal in range(3):
-                res[i, j, canal] = np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
-    return res
+                res[i, j, canal] = np.min(vecinos[:, :, canal])  # np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
+
+    resFiltrada = np.zeros(imagen.shape)
+    for i in range(2, imagen.shape[0] - 2):
+        for j in range(2, imagen.shape[1] - 2):
+            vecinos = res[i-2:i+3, j-2:j+3]
+            for canal in range(3):
+                resFiltrada[i, j, canal] = np.max(vecinos[:, :, canal])
+    return resFiltrada
 
 
 def sacarGrises(imagen):
