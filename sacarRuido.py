@@ -36,6 +36,7 @@ def filtroMaximo(imagen):
     vecindario = np.ones((5, 5))
     for canal in range(3):
         resFiltrada[:, :, canal] = dilation(imagen[:, :, canal], footprint=vecindario)
+    return resFiltrada
 
 
 # Promedio geometrico de Digital Image Processing (Gonzales, Woods)
@@ -48,7 +49,7 @@ def promedioGeometrico(imagen):
             for canal in range(3):
                 res[i, j, canal] = np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
 
-    return filtroMaximo(res)
+    return res
 
 
 def sacarGrises(imagen):
@@ -97,10 +98,10 @@ if __name__ == "__main__":
     imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-    pltImagenConH(imagenNormal, sacarNiebla(imagenNormal), "Imagen Normal", "Sacar grises", axs, 0)
-    pltImagenConH(imagenRuidosa, promedioGeometrico(imagenRuidosa), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
-    pltImagenConH(imagenNiebla, sacarNiebla(imagenNiebla), "Imagen Niebla", "Sacar grises", axs, 2)
-    pltImagenConH(imagenSaltAndPepper, sacarNiebla(imagenSaltAndPepper), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
+    pltImagenConH(imagenNormal, filtroMaximo(sacarNiebla(imagenNormal)), "Imagen Normal", "Sacar grises", axs, 0)
+    pltImagenConH(imagenRuidosa, filtroMaximo(promedioGeometrico(imagenRuidosa)), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConH(imagenNiebla, filtroMaximo(sacarNiebla(imagenNiebla)), "Imagen Niebla", "Sacar grises", axs, 2)
+    pltImagenConH(imagenSaltAndPepper, filtroMaximo(sacarNiebla(imagenSaltAndPepper)), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
 
     plt.tight_layout()
     plt.show()
