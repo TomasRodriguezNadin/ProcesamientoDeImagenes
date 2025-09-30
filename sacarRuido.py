@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
 from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
-from skimage.filters.rank import maximum
+from skimage.morphology import dilation
 
 
 def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
@@ -31,6 +31,13 @@ def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
     axs[2][columna].imshow((rgb2gray(imagenMascara)), cmap='gray', clim=(0, 1))
 
 
+def filtroMaximo(imagen):
+    resFiltrada = np.empty(imagen.shape)
+    vecindario = np.ones((5, 5))
+    for canal in range(3):
+        resFiltrada[:, :, canal] = dilation(imagen[:, :, canal], footprint=vecindario)
+
+
 # Promedio geometrico de Digital Image Processing (Gonzales, Woods)
 # Capitulo 5, seccion de restauracion en presencia de ruido aditivo
 def promedioGeometrico(imagen):
@@ -41,11 +48,7 @@ def promedioGeometrico(imagen):
             for canal in range(3):
                 res[i, j, canal] = np.power(np.prod(vecinos[:, :, canal]), 1.0/25)
 
-    vecindario = np.ones((3, 3))
-    resFiltrada = np.empty(imagen.shape)
-    for canal in range(3):
-        resFiltrada[:, :, canal] = maximum(res[:, :, canal], footprint=vecindario)
-    return resFiltrada
+    return filtroMaximo(res)
 
 
 def sacarGrises(imagen):
