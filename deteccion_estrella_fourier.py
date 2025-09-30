@@ -89,14 +89,14 @@ def main():
         # Tomar el promedio entre ancho y alto como radio base
         radio_base = (ancho + alto) / 4
         # Crear un rango alrededor del radio base
-        radios.extend([radio_base * 0.8, radio_base, radio_base * 1.2])
+        radios.extend(np.arange(radio_base - 5, radio_base + 5, 1))
 
     # Convertir a array de numpy y asegurar que sean enteros
     radios = np.unique(np.round(radios).astype(int))
     
     # Hough para círculos
     hough_res = hough_circle(bordes, radios)
-    accum, cx, cy, rad = hough_circle_peaks(hough_res, radios, total_num_peaks=len(radios))
+    accum, cx, cy, rad = hough_circle_peaks(hough_res, radios, total_num_peaks=len(posiciones_figuras))
     
     print(f"Círculos detectados: {len(cx)}")
     for i in range(len(cx)):
