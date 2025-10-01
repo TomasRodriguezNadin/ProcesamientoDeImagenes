@@ -8,10 +8,6 @@ import sys
 
 
 def mostrarFiguras(imagen):
-    axs[0][0].set_title("Imagen")
-    axs[0][0].axis("off")
-    axs[0][0].imshow(imagen, clim=(0, 1))
-
     limitesFiguras = op.encontrarPosicionesImagenes(imagen)
     cant = min(len(limitesFiguras), 4)
     for i in range(cant):
@@ -19,10 +15,17 @@ def mostrarFiguras(imagen):
         maxX = limitesFiguras[i][1]
         minY = limitesFiguras[i][2]
         maxY = limitesFiguras[i][3]
+        figura = imagen[minY:maxY+1, minX:maxX+1]
         print(f"({minX}, {minY}), ({maxX}, {maxY})")
-        axs[1][i].set_title(f"Figura {i}")
-        axs[1][i].axis("off")
-        axs[1][i].imshow(imagen[minY:maxY+1, minX:maxX+1])
+        axs[0][i].set_title(f"Figura {i}")
+        axs[0][i].axis("off")
+        axs[0][i].imshow(figura)
+
+        enGris = rgb2gray(figura)
+        axs[1][i].set_title("Histograma del gris")
+        axs[1][i].grid(True)
+        axs[1][i].hist(enGris.ravel(), bins=256, histtype='step', color='black')
+       
 
 
 if __name__ == "__main__":
