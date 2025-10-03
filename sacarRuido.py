@@ -5,7 +5,7 @@ from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
 from skimage.morphology import dilation
 
 
-def pltImagenConH(imagen, imagenH, nombre, nombreH, axs, columna):
+def pltImagenConFiltros(imagen, imagenH, nombre, nombreH, axs, columna):
     axs[0][columna].set_title(f"Imagen {nombre}")
     axs[0][columna].axis("off")
     axs[0][columna].imshow(imagen, clim=(0, 1))
@@ -59,38 +59,6 @@ def sacarGrises(imagen):
     return hsv2rgb(imagenHSV)
 
 
-def max(arr):
-    maximo = np.max(arr)
-    if arr[2] == maximo:
-        return 2
-    if arr[1] == maximo:
-        return 1
-    return 0
-
-
-def umbralizarColores(imagen):
-    copia = np.copy(imagen)
-    for i in range(imagen.shape[0]):
-        for j in range(imagen.shape[1]):
-            maximo = max(imagen[i, j])
-            for canal in range(3):
-                if canal != maximo:
-                    copia[i, j, canal] = 0
-
-    return copia
-
-
-def sacarNiebla(imagen):
-    imagenHSV = rgb2hsv(imagen)
-    for i in range(imagen.shape[0]):
-        for j in range(imagen.shape[1]):
-            if imagenHSV[i, j, 1] == 0:
-                imagenHSV[i, j] = 0
-            else:
-                imagenHSV[i, j, 1] = 1
-    return hsv2rgb(imagenHSV)
-
-
 if __name__ == "__main__":
     imagenNormal = util.img_as_float64(io.imread("./shape_dataset/image_0001.png"))
     imagenRuidosa = util.img_as_float64(io.imread("./shape_dataset/image_0009.png"))
@@ -98,10 +66,10 @@ if __name__ == "__main__":
     imagenSaltAndPepper = util.img_as_float64(io.imread("./shape_dataset/image_0012.png"))
 
     fig, axs = plt.subplots(3, 4, figsize=(20, 10))
-    pltImagenConH(imagenNormal, filtroMaximo(sacarNiebla(imagenNormal)), "Imagen Normal", "Sacar grises", axs, 0)
-    pltImagenConH(imagenRuidosa, filtroMaximo(promedioGeometrico(imagenRuidosa)), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
-    pltImagenConH(imagenNiebla, filtroMaximo(sacarNiebla(imagenNiebla)), "Imagen Niebla", "Sacar grises", axs, 2)
-    pltImagenConH(imagenSaltAndPepper, filtroMaximo(sacarNiebla(imagenSaltAndPepper)), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
+    pltImagenConFiltros(imagenNormal, filtroMaximo(sacarGrises(imagenNormal)), "Imagen Normal", "Sacar grises", axs, 0)
+    pltImagenConFiltros(imagenRuidosa, filtroMaximo(promedioGeometrico(imagenRuidosa)), "Imagen Ruidosa", "Promedio Geometrico", axs, 1)
+    pltImagenConFiltros(imagenNiebla, filtroMaximo(sacarGrises(imagenNiebla)), "Imagen Niebla", "Sacar grises", axs, 2)
+    pltImagenConFiltros(imagenSaltAndPepper, filtroMaximo(sacarGrises(imagenSaltAndPepper)), "Imagen SaltAndPepper", "SacarGrises", axs, 3)
 
     plt.tight_layout()
     plt.show()

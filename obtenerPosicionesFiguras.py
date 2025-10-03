@@ -1,6 +1,5 @@
 import numpy as np
 from skimage.color import rgb2hsv
-from skimage.color import rgb2hsv
 
 
 maxX = 0

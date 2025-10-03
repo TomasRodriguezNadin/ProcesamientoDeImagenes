@@ -1,10 +1,7 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, util
-from skimage.color import rgb2hsv, hsv2rgb, rgb2gray
 import obtenerPosicionesFiguras as op
 import sacarRuido as sr
-import sys
 
 
 def mostrarFiguras(imagen):
@@ -30,7 +27,7 @@ def mostrarFiguras(imagen):
 
 if __name__ == "__main__":
     imagen = util.img_as_float64(io.imread("./image.png"))
-    imagen = sr.sacarNiebla(imagen)
+    imagen = sr.sacarGrises(imagen)
 
     fig, axs = plt.subplots(2, 4, figsize=(20, 10))
     mostrarFiguras(imagen)
